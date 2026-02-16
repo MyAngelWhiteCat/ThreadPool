@@ -9,8 +9,12 @@ add_library(ThreadPool
 
 )
 
-add_executable(TestedRealization 
+add_executable(TestUseCase 
     src/main.cpp 
+)
+
+target_link_libraries(TestUseCase PRIVATE 
+    ThreadPool 
 )
 
 
