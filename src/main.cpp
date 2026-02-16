@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <syncstream>
+#include <Windows.h>
 
 
 void Print(const std::string& data) {
