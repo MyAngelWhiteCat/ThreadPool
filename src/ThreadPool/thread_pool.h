@@ -37,6 +37,9 @@ private:
 
 template<typename Fn>
 inline void ThreadPool::AddTask(Fn&& task) {
+    if (destruction_flag_.load()) {
+        throw std::runtime_error("Can't add task to thread pool after d-tor called");
+    }
     std::unique_lock lk{ task_mutex_ };
     tasks_.push(std::forward<Fn>(task));
     convar_.notify_one();
