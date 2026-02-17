@@ -32,7 +32,7 @@ void ThreadPool::Work() {
             convar_.wait(lk, [this] {
                 return !tasks_.empty() || destruction_flag_.load();
                 });
-            if (destruction_flag_.load()) {
+            if (destruction_flag_.load() && tasks_.empty()) {
                 return;
             }
             task = std::move(tasks_.front());
