@@ -7,6 +7,7 @@
 
 
 ThreadPool::ThreadPool(size_t count) {
+    hThreads_.reserve(count);
     for (size_t i = 0; i < count; ++i) {
         hThreads_.push_back(
             CreateThread(NULL, 0, ThreadStartWrapper, this, 0, NULL)
