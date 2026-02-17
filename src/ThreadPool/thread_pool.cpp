@@ -1,4 +1,8 @@
 #include "thread_pool.h"
+
+#include <functional>
+#include <mutex>
+#include <utility>
 #include <Windows.h>
 
 
