@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <condition_variable>
 #include <functional>
 #include <mutex>
@@ -7,7 +8,6 @@
 #include <utility>
 #include <vector>
 #include <Windows.h>
-#include <atomic>
 
 
 class ThreadPool {
