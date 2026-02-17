@@ -7,6 +7,7 @@
 #include <utility>
 #include <vector>
 #include <Windows.h>
+#include <atomic>
 
 
 class ThreadPool {
@@ -24,6 +25,7 @@ private:
     std::queue<std::function<void()>> tasks_;
     std::condition_variable convar_;
     std::vector<HANDLE> hThreads_;
+    std::atomic_bool destruction_flag_{ false };
 
     static DWORD WINAPI ThreadStartWrapper(LPVOID lpParam) {
         static_cast<ThreadPool*>(lpParam)->Work();
