@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 20)
 add_library(ThreadPool 
     src/ThreadPool/thread_pool.h
     src/ThreadPool/thread_pool.cpp
-
 )
 
 add_executable(TestUseCase 
