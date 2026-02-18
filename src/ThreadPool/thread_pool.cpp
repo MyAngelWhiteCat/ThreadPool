@@ -3,6 +3,11 @@
 #include <functional>
 #include <mutex>
 #include <utility>
+#include <exception>
+#include <string_view>
+#include <iostream>
+#include <string>
+
 #include <Windows.h>
 
 
@@ -13,6 +18,14 @@ ThreadPool::ThreadPool(size_t count) {
             CreateThread(NULL, 0, ThreadStartWrapper, this, 0, NULL)
         );
     }
+    SetDebugLogger([this](const std::string_view info) {
+        std::lock_guard lk{ default_logger_mutex_ };
+        std::clog << info << std::endl;
+        });
+    SetErrorLogger([this](const std::string_view error) {
+        std::lock_guard lk{ default_logger_mutex_ };
+        std::cerr << error << std::endl;
+        });
 }
 
 ThreadPool::~ThreadPool() {
@@ -38,7 +51,12 @@ void ThreadPool::Work() {
             task = std::move(tasks_.front());
             tasks_.pop();
         }
-        task();
+        try {
+            task();
+        }
+        catch (const std::exception& e) {
+            error_logger_(std::string("ThreadPool task error: ") + e.what());
+        }
     }
 }
 
