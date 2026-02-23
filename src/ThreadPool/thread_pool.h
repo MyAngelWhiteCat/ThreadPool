@@ -24,6 +24,7 @@ public:
     template <typename Fn>
     void AddTask(Fn&& task);
 
+    void WaitAllTasks();
 
 private:
     std::mutex task_mutex_;
@@ -35,6 +36,9 @@ private:
     std::function<void(const std::string_view)> debug_logger_;
     std::function<void(const std::string_view)> error_logger_;
     std::mutex default_logger_mutex_;
+
+    std::atomic<UINT> active_tasks_{ 0 };
+    std::atomic<BOOL> any_job_was_taken_{ FALSE };
 
     static DWORD WINAPI ThreadStartWrapper(LPVOID lpParam) {
         static_cast<ThreadPool*>(lpParam)->Work();
@@ -57,6 +61,8 @@ inline void ThreadPool::AddTask(Fn&& task) {
     {
         std::unique_lock lk{ task_mutex_ };
         tasks_.push(std::forward<Fn>(task));
+        ++active_tasks_;
+        any_job_was_taken_.store(TRUE);
     }
     convar_.notify_one();
 }
