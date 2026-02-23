@@ -37,6 +37,7 @@ private:
     std::function<void(const std::string_view)> error_logger_;
     std::mutex default_logger_mutex_;
 
+    std::condition_variable tasks_done_convar_;
     std::atomic<UINT> active_tasks_{ 0 };
     std::atomic<BOOL> any_job_was_taken_{ FALSE };
 

@@ -39,7 +39,7 @@ ThreadPool::~ThreadPool() {
 
 void ThreadPool::WaitAllTasks() {
     std::unique_lock lk{ task_mutex_ };
-    convar_.wait(lk, [this] {
+    tasks_done_convar_.wait(lk, [this] {
         return any_job_was_taken_.load() && !active_tasks_.load();
         });
 }
@@ -61,10 +61,12 @@ void ThreadPool::Work() {
         try {
             task();
             --active_tasks_;
+            tasks_done_convar_.notify_one();
         }
         catch (const std::exception& e) {
             error_logger_(std::string("ThreadPool task error: ") + e.what());
             --active_tasks_;
+            tasks_done_convar_.notify_one();
         }
     }
 }
